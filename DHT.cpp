@@ -5,7 +5,7 @@ written by Adafruit Industries
 rewritten by Denisov Sergey 2015
 */
 
-#include "DHT_vova.h"
+#include "DHT.h"
 #include <avr/io.h>
 #include <util/delay.h>
 
