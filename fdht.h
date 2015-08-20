@@ -14,8 +14,7 @@
 #ifndef __FAST_DHT_H__
 #define __FAST_DHT_H__
 
-#include "Arduino.h"
-
+#include <stdint.h>
 /*
  * Sensor's port
  */

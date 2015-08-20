@@ -12,8 +12,11 @@
  */
 
 #include <fdht.h>
+#include <Arduino.h>
 #include <avr/io.h>
 #include <util/delay.h>
+#include <avr/interrupt.h>
+
 
 #define DHT_COUNT 6
 #define DHT_MAXTIMINGS 85
@@ -24,22 +27,22 @@ void dht_init(struct dht_t *dht, uint8_t pin)
     dht->pin = pin;
     dht->first_reading = 1;
     /* Setup the pins! */
-    DDR_DHT &= ~(HIGH << dht->pin);
-    PORT_DHT |= (HIGH << dht->pin);
+    DDR_DHT &= ~(1 << dht->pin);
+    PORT_DHT |= (1 << dht->pin);
     dht->last_read_time = 0;
 }
 
 uint8_t dht_read(struct dht_t *dht)
 {
-    uint8_t last_state = HIGH;
-    uint16_t counter = 0;
-    uint8_t j = 0, i;
     uint8_t tmp;
+    uint8_t j = 0, i;
+    uint8_t last_state = 1;
+    uint16_t counter = 0;
     unsigned long current_time;
     /*
-     * Pull the pin high and wait 250 milliseconds
+     * Pull the pin 1 and wait 250 milliseconds
      */
-    PORT_DHT |= (HIGH << dht->pin);
+    PORT_DHT |= (1 << dht->pin);
     _delay_ms(250);
 
     current_time = millis();
@@ -56,19 +59,19 @@ uint8_t dht_read(struct dht_t *dht)
     dht->data[0] = dht->data[1] = dht->data[2] = dht->data[3] = dht->data[4] = 0;
 
     /* Now pull it low for ~20 milliseconds */
-    DDR_DHT |= (HIGH << dht->pin);
-    PORT_DHT &= ~(HIGH << dht->pin);
+    DDR_DHT |= (1 << dht->pin);
+    PORT_DHT &= ~(1 << dht->pin);
     _delay_ms(20);
     cli();
-    PORT_DHT |= (HIGH << dht->pin);
+    PORT_DHT |= (1 << dht->pin);
     _delay_us(40);
-    DDR_DHT &= ~(HIGH << dht->pin);
+    DDR_DHT &= ~(1 << dht->pin);
 
     /* Read the timings */
     for (i = 0; i < DHT_MAXTIMINGS; i++) {
         counter = 0;
         while (1) {
-            tmp = ((PIN_DHT & (HIGH << dht->pin)) >> 1);
+            tmp = ((PIN_DHT & (1 << dht->pin)) >> 1);
             _delay_us(3);
 
             if (tmp != last_state)
@@ -81,7 +84,7 @@ uint8_t dht_read(struct dht_t *dht)
                 break;
         }
 
-        last_state = ((PIN_DHT & (HIGH << dht->pin)) >> 1);
+        last_state = ((PIN_DHT & (1 << dht->pin)) >> 1);
 
         if (counter == 255)
             break;
