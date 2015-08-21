@@ -26,8 +26,8 @@
 struct dht_t {
 	uint8_t data[6];    /* data from sensor store here */
 	uint8_t pin;        /* DDR & PORT pin */
-    float temp;         /* current temperature */
-    float hum;          /* current humidity */
+	float temp;         /* current temperature */
+	float hum;          /* current humidity */
 };
 
 /**
