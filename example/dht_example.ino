@@ -6,21 +6,19 @@ struct dht_t dht;
 void setup()
 {
     Serial.begin(9600);
+    /* Digital pin 9 */
     dht_init(&dht, 1);
 }
 
 void loop()
 {
-    float t;
-    float h;
-    
-    if (dht_read_data(&dht, &t, &h)) {
+    if (dht_read_data(&dht)) {
         Serial.print("\nTemp: ");
-        Serial.println(t);
+        Serial.println(dht.temp);
         Serial.print("Hum: ");
-        Serial.println(h);
+        Serial.println(dht.hum);
     } else {
-        Serial.println("Error reading");
+        Serial.println("Error of reading");
     }
     
     delay(2000);

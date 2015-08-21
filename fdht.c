@@ -12,7 +12,6 @@
  */
 
 #include <fdht.h>
-#include <Arduino.h>
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -25,16 +24,15 @@
 void dht_init(struct dht_t *dht, uint8_t pin)
 {
     dht->pin = pin;
-    dht->first_reading = 1;
     /* Setup the pins! */
     DDR_DHT &= ~(1 << dht->pin);
     PORT_DHT |= (1 << dht->pin);
-    dht->last_read_time = 0;
 }
 
-uint8_t dht_read(struct dht_t *dht)
+static uint8_t dht_read(struct dht_t *dht)
 {
     uint8_t tmp;
+    uint8_t sum = 0;
     uint8_t j = 0, i;
     uint8_t last_state = 1;
     uint16_t counter = 0;
@@ -44,17 +42,6 @@ uint8_t dht_read(struct dht_t *dht)
      */
     PORT_DHT |= (1 << dht->pin);
     _delay_ms(250);
-
-    current_time = millis();
-    if (current_time < dht->last_read_time) {
-        /* IE there was a rollover */
-        dht->last_read_time = 0;
-    }
-    if (!dht->first_reading && ((current_time - dht->last_read_time) < 2000))
-        return true;
-
-    dht->first_reading = 0;
-    dht->last_read_time = millis();
 
     dht->data[0] = dht->data[1] = dht->data[2] = dht->data[3] = dht->data[4] = 0;
 
@@ -100,57 +87,61 @@ uint8_t dht_read(struct dht_t *dht)
     }
 
     sei();
+    sum = dht->data[0] + dht->data[1] + dht->data[2] + dht->data[3];
 
-    if ((j >= 40) && (dht->data[4] == ((dht->data[0] + dht->data[1] + dht->data[2] + dht->data[3]) & 0xFF))) {
+    if ((j >= 40) && (dht->data[4] == (sum & 0xFF)))
         return 1;
-    }
     return 0;
 }
 
-uint8_t dht_read_temp(struct dht_t *dht, float *temp)
+uint8_t dht_read_temp(struct dht_t *dht)
 {
     if (dht_read(dht)) {
-        *temp = dht->data[2] & 0x7F;
-        *temp *= 256;
-        *temp += dht->data[3];
-        *temp /= 10;
+        dht->temp = dht->data[2] & 0x7F;
+        dht->temp *= 256;
+        dht->temp += dht->data[3];
+        dht->temp /= 10;
 
         if (dht->data[2] & 0x80)
-            *temp *= -1;
+            dht->temp *= -1;
         return 1;
     }
     return 0;
 }
 
-uint8_t dht_read_hum(struct dht_t *dht, float *hum)
+uint8_t dht_read_hum(struct dht_t *dht)
 {
     if (dht_read(dht)) {
-        *hum = dht->data[0];
-        *hum *= 256;
-        *hum += dht->data[1];
-        *hum /= 10;
+        dht->hum = dht->data[0];
+        dht->hum *= 256;
+        dht->hum += dht->data[1];
+        dht->hum /= 10;
+        if (dht->hum == 0.0f)
+            return 0;
         return 1;
     }
     return 0;
 }
 
-uint8_t dht_read_data(struct dht_t *dht, float *temp, float *hum)
+uint8_t dht_read_data(struct dht_t *dht)
 {
     if (dht_read(dht)) {
         /* Reading temperature */
-        *temp = dht->data[2] & 0x7F;
-        *temp *= 256;
-        *temp += dht->data[3];
-        *temp /= 10;
+        dht->temp = dht->data[2] & 0x7F;
+        dht->temp *= 256;
+        dht->temp += dht->data[3];
+        dht->temp /= 10;
 
         if (dht->data[2] & 0x80)
-            *temp *= -1;
+            dht->temp *= -1;
 
         /* Reading humidity */
-        *hum = dht->data[0];
-        *hum *= 256;
-        *hum += dht->data[1];
-        *hum /= 10;
+        dht->hum = dht->data[0];
+        dht->hum *= 256;
+        dht->hum += dht->data[1];
+        dht->hum /= 10;
+        if (dht->hum == 0.0f)
+            return 0;
         return 1;
     }
     return 0;

@@ -23,10 +23,10 @@
 #define PIN_DHT PINB
 
 struct dht_t {
-	uint8_t data[6];                /* data from sensor store here */
-	uint8_t pin;                    /* DDR & PORT pin */
-	unsigned long last_read_time;   /* last reading time of sensor */
-	uint8_t first_reading;          /* first reading time of sensor */
+	uint8_t data[6];    /* data from sensor store here */
+	uint8_t pin;        /* DDR & PORT pin */
+    float temp;         /* current temperature */
+    float hum;          /* current humidity */
 };
 
 /**
@@ -39,35 +39,31 @@ void dht_init(struct dht_t *dht, uint8_t pin);
 /**
  * Reading temperature from sensor
  * @dht: sensor struct
- * @temp: temperature pointer
  *
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht_read_temp(struct dht_t *dht, float *temp);
+uint8_t dht_read_temp(struct dht_t *dht);
 
 /**
  * Reading humidity from sensor
  * @dht: sensor struct
- * @hum: humidity pointer
  *
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht_read_hum(struct dht_t *dht, float *hum);
+uint8_t dht_read_hum(struct dht_t *dht);
 
 /**
  * Reading temperature and humidity from sensor
  * @dht: sensor struct
- * @temp: temperature pointer
- * @hum: humidity pointer
  *
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  *
  * The fastest function for getting temperature + humidity.
  */
-uint8_t dht_read_data(struct dht_t *dht, float *temp, float *hum);
+uint8_t dht_read_data(struct dht_t *dht);
 
 
 #endif
