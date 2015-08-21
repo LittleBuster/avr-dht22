@@ -15,6 +15,7 @@
 #define __FAST_DHT_H__
 
 #include <stdint.h>
+
 /*
  * Sensor's port
  */
