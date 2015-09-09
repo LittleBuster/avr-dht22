@@ -21,7 +21,7 @@
 #define DHT_MAXTIMINGS 85
 
 
-void dht_init(struct dht_t *dht, uint8_t pin)
+void dht_init(DHT *dht, uint8_t pin)
 {
     dht->pin = pin;
     /* Setup the pins! */
@@ -29,7 +29,7 @@ void dht_init(struct dht_t *dht, uint8_t pin)
     PORT_DHT |= (1 << dht->pin);
 }
 
-static uint8_t dht_read(struct dht_t *dht)
+static uint8_t dht_read(DHT *dht)
 {
     uint8_t tmp;
     uint8_t sum = 0;
@@ -94,7 +94,7 @@ static uint8_t dht_read(struct dht_t *dht)
     return 0;
 }
 
-uint8_t dht_read_temp(struct dht_t *dht)
+uint8_t dht_read_temp(DHT *dht)
 {
     if (dht_read(dht)) {
         dht->temp = dht->data[2] & 0x7F;
@@ -109,7 +109,7 @@ uint8_t dht_read_temp(struct dht_t *dht)
     return 0;
 }
 
-uint8_t dht_read_hum(struct dht_t *dht)
+uint8_t dht_read_hum(DHT *dht)
 {
     if (dht_read(dht)) {
         dht->hum = dht->data[0];
@@ -123,7 +123,7 @@ uint8_t dht_read_hum(struct dht_t *dht)
     return 0;
 }
 
-uint8_t dht_read_data(struct dht_t *dht)
+uint8_t dht_read_data(DHT *dht)
 {
     if (dht_read(dht)) {
         /* Reading temperature */
