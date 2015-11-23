@@ -1,3 +1,1 @@
-# FDHT - Fast DHT Library
-
-Move folder FDHT in "libraries" directory to install it;
+# DHT22 - Fast DHT22 Library for AVR

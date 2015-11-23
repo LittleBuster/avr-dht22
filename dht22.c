@@ -11,7 +11,7 @@
  * Original library written by Adafruit Industries. MIT license.
  */
 
-#include <fdht.h>
+#include "dht22.h"
 #include <avr/io.h>
 #include <util/delay.h>
 #include <avr/interrupt.h>
@@ -21,7 +21,7 @@
 #define DHT_MAXTIMINGS 85
 
 
-void dht_init(DHT *dht, uint8_t pin)
+void dht_init(DHT22 *dht, uint8_t pin)
 {
     dht->pin = pin;
     /* Setup the pins! */
@@ -29,7 +29,7 @@ void dht_init(DHT *dht, uint8_t pin)
     PORT_DHT |= (1 << dht->pin);
 }
 
-static uint8_t dht_read(DHT *dht)
+static uint8_t dht_read(DHT22 *dht)
 {
     uint8_t tmp;
     uint8_t sum = 0;
@@ -94,53 +94,53 @@ static uint8_t dht_read(DHT *dht)
     return 0;
 }
 
-uint8_t dht_read_temp(DHT *dht)
+uint8_t dht_read_temp(DHT22 *dht, float *temp)
 {
     if (dht_read(dht)) {
-        dht->temp = dht->data[2] & 0x7F;
-        dht->temp *= 256;
-        dht->temp += dht->data[3];
-        dht->temp /= 10;
+        *temp = dht->data[2] & 0x7F;
+        *temp *= 256;
+        *temp += dht->data[3];
+        *temp /= 10;
 
         if (dht->data[2] & 0x80)
-            dht->temp *= -1;
+            *temp *= -1;
         return 1;
     }
     return 0;
 }
 
-uint8_t dht_read_hum(DHT *dht)
+uint8_t dht_read_hum(DHT22 *dht, float *hum)
 {
     if (dht_read(dht)) {
-        dht->hum = dht->data[0];
-        dht->hum *= 256;
-        dht->hum += dht->data[1];
-        dht->hum /= 10;
-        if (dht->hum == 0.0f)
+        *hum = dht->data[0];
+        *hum *= 256;
+        *hum += dht->data[1];
+        *hum /= 10;
+        if (*hum == 0.0f)
             return 0;
         return 1;
     }
     return 0;
 }
 
-uint8_t dht_read_data(DHT *dht)
+uint8_t dht_read_data(DHT22 *dht, float *temp, float *hum)
 {
     if (dht_read(dht)) {
         /* Reading temperature */
-        dht->temp = dht->data[2] & 0x7F;
-        dht->temp *= 256;
-        dht->temp += dht->data[3];
-        dht->temp /= 10;
+        *temp = dht->data[2] & 0x7F;
+        *temp *= 256;
+        *temp += dht->data[3];
+        *temp /= 10;
 
         if (dht->data[2] & 0x80)
-            dht->temp *= -1;
+            *temp *= -1;
 
         /* Reading humidity */
-        dht->hum = dht->data[0];
-        dht->hum *= 256;
-        dht->hum += dht->data[1];
-        dht->hum /= 10;
-        if (dht->hum == 0.0f)
+        *hum = dht->data[0];
+        *hum *= 256;
+        *hum += dht->data[1];
+        *hum /= 10;
+        if (*hum == 0.0f)
             return 0;
         return 1;
     }
