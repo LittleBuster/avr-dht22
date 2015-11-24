@@ -23,7 +23,7 @@
 #define PORT_DHT PORTB
 #define PIN_DHT PINB
 
-typedef struct dht_t DHT22;
+typedef struct dht22_t DHT22;
 
 struct dht22_t {
 	uint8_t data[6];    /* data from sensor store here */
@@ -35,7 +35,7 @@ struct dht22_t {
  * @dht: sensor struct
  * @pin: PORT & DDR pin
  */
-void dht22_init(DHT22 *dht, uint8_t pin);
+void dht_init(DHT22 *dht, uint8_t pin);
 
 /**
  * Reading temperature from sensor
@@ -45,7 +45,7 @@ void dht22_init(DHT22 *dht, uint8_t pin);
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht22_read_temp(DHT22 *dht, float *temp);
+uint8_t dht_read_temp(DHT22 *dht, float *temp);
 
 /**
  * Reading humidity from sensor
@@ -55,7 +55,7 @@ uint8_t dht22_read_temp(DHT22 *dht, float *temp);
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht22_read_hum(DHT22 *dht, float *hum);
+uint8_t dht_read_hum(DHT22 *dht, float *hum);
 
 /**
  * Reading temperature and humidity from sensor
@@ -68,7 +68,7 @@ uint8_t dht22_read_hum(DHT22 *dht, float *hum);
  *
  * The fastest function for getting temperature + humidity.
  */
-uint8_t dht22_read_data(DHT22 *dht, float *temp, float *hum);
+uint8_t dht_read_data(DHT22 *dht, float *temp, float *hum);
 
 
 #endif
