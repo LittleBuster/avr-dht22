@@ -1,4 +1,4 @@
-/* DHT22 AVR Lirary
+/* struct dht22 AVR Lirary
  *
  * Copyright (C) 2015 Sergey Denisov.
  * Written by Sergey Denisov aka LittleBuster (DenisovS21@gmail.com)
@@ -23,9 +23,7 @@
 #define PORT_DHT PORTB
 #define PIN_DHT PINB
 
-typedef struct dht22_t DHT22;
-
-struct dht22_t {
+struct dht22 {
 	uint8_t data[6];    /* data from sensor store here */
 	uint8_t pin;        /* DDR & PORT pin */
 };
@@ -35,7 +33,7 @@ struct dht22_t {
  * @dht: sensor struct
  * @pin: PORT & DDR pin
  */
-void dht_init(DHT22 *dht, uint8_t pin);
+void dht_init(struct dht22 *dht, uint8_t pin);
 
 /**
  * Reading temperature from sensor
@@ -45,7 +43,7 @@ void dht_init(DHT22 *dht, uint8_t pin);
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht_read_temp(DHT22 *dht, float *temp);
+uint8_t dht_read_temp(struct dht22 *dht, float *temp);
 
 /**
  * Reading humidity from sensor
@@ -55,7 +53,7 @@ uint8_t dht_read_temp(DHT22 *dht, float *temp);
  * Returns 1 if succeful reading
  * Returns 0 if fail reading
  */
-uint8_t dht_read_hum(DHT22 *dht, float *hum);
+uint8_t dht_read_hum(struct dht22 *dht, float *hum);
 
 /**
  * Reading temperature and humidity from sensor
@@ -68,7 +66,7 @@ uint8_t dht_read_hum(DHT22 *dht, float *hum);
  *
  * The fastest function for getting temperature + humidity.
  */
-uint8_t dht_read_data(DHT22 *dht, float *temp, float *hum);
+uint8_t dht_read_data(struct dht22 *dht, float *temp, float *hum);
 
 
 #endif

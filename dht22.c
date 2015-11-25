@@ -21,7 +21,7 @@
 #define DHT_MAXTIMINGS 85
 
 
-void dht_init(DHT22 *dht, uint8_t pin)
+void dht_init(struct dht22 *dht, uint8_t pin)
 {
     dht->pin = pin;
     /* Setup the pins! */
@@ -29,14 +29,13 @@ void dht_init(DHT22 *dht, uint8_t pin)
     PORT_DHT |= (1 << dht->pin);
 }
 
-static uint8_t dht_read(DHT22 *dht)
+static uint8_t dht_read(struct dht22 *dht)
 {
     uint8_t tmp;
     uint8_t sum = 0;
     uint8_t j = 0, i;
     uint8_t last_state = 1;
     uint16_t counter = 0;
-    unsigned long current_time;
     /*
      * Pull the pin 1 and wait 250 milliseconds
      */
@@ -94,7 +93,7 @@ static uint8_t dht_read(DHT22 *dht)
     return 0;
 }
 
-uint8_t dht_read_temp(DHT22 *dht, float *temp)
+uint8_t dht_read_temp(struct dht22 *dht, float *temp)
 {
     if (dht_read(dht)) {
         *temp = dht->data[2] & 0x7F;
@@ -109,7 +108,7 @@ uint8_t dht_read_temp(DHT22 *dht, float *temp)
     return 0;
 }
 
-uint8_t dht_read_hum(DHT22 *dht, float *hum)
+uint8_t dht_read_hum(struct dht22 *dht, float *hum)
 {
     if (dht_read(dht)) {
         *hum = dht->data[0];
@@ -123,7 +122,7 @@ uint8_t dht_read_hum(DHT22 *dht, float *hum)
     return 0;
 }
 
-uint8_t dht_read_data(DHT22 *dht, float *temp, float *hum)
+uint8_t dht_read_data(struct dht22 *dht, float *temp, float *hum)
 {
     if (dht_read(dht)) {
         /* Reading temperature */
