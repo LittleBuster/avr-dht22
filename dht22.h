@@ -24,8 +24,8 @@
 #define PIN_DHT PINB
 
 struct dht22 {
-	uint8_t data[6];    /* data from sensor store here */
-	uint8_t pin;        /* DDR & PORT pin */
+    uint8_t data[6];    /* data from sensor store here */
+    uint8_t pin;        /* DDR & PORT pin */
 };
 
 /**
